@@ -2,6 +2,7 @@
 import 'dart:ffi';
 
 import 'package:china_chess/Board/borad_paint.dart';
+import 'package:china_chess/Board/words_on_board.dart';
 import 'package:china_chess/Constants.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -26,6 +27,9 @@ class BoardWidget extends StatelessWidget {
        ),
        child: CustomPaint(
          painter: BoardPaint(width: this.width),
+         child: Container(
+           child: WordsOnBoard(),
+         ),
        ),
      );
   }
