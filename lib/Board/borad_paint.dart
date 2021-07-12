@@ -2,23 +2,18 @@
 import 'dart:math';
 
 import 'package:china_chess/Board/BoardWidget.dart';
+import 'package:china_chess/Board/painter_base.dart';
 import 'package:china_chess/Constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class BoardPaint extends CustomPainter{
+class BoardPaint extends PainterBase{
 
-    //棋盘的宽度，棋盘上线格的总宽度，每一个格子的边长
-    final double width,gridWidth,squareSize;
-    final thePaint = Paint();
-
-    BoardPaint({@required this.width}) :
-        gridWidth = (width - Constants.BoardMarginH * 2) / 9 * 8,
-          squareSize = (width - Constants.BoardMarginH * 2) / 9;
+  BoardPaint({@required double width}) : super(width: width);
 
   @override
   void paint(Canvas canvas, Size size) {
-      doPaint(canvas, thePaint, gridWidth, squareSize, offsetx: squareSize/2 + Constants.BoardMarginH,offsety: Constants.DigitsHeight + squareSize / 2 + Constants.BoardMarginV);
+      doPaint(canvas, thePaint, gridWidth, squareSide, offsetx: squareSide/2 + Constants.BoardMarginH,offsety: Constants.DigitsHeight + squareSide / 2 + Constants.BoardMarginV);
   }
 
   @override
