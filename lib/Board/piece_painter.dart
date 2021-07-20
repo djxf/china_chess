@@ -97,12 +97,59 @@ class PiecesPainter extends PainterBase {
         shadowPath.addOval(
           Rect.fromCenter(center: pos, width: piecesSide, height: piecesSide)
         );
-        
       }
     }
 
     canvas.drawShadow(shadowPath, Colors.black, 2, true);
 
+
+    //逐个绘制棋子
+    final textStyle = TextStyle(
+      color: Constants.PieceTextColor,
+      fontSize: piecesSide * 0.8,
+      height: 1.0
+    );
+
+    piecesToDraw.forEach((it) {
+
+      paint.color = Piece.isRed(it.piece) ? Constants.RedPieceBorderColor : Constants.BlackPieceBorderColor;
+
+      //绘制棋子的边界
+      canvas.drawCircle(it.pos, piecesSide/2, paint);
+
+      paint.color = Piece.isRed(it.piece) ? Constants.BlackPieceBorderColor:Constants.RedPieceBorderColor;
+      //绘制棋子的内部圆
+      canvas.drawCircle(it.pos, piecesSide * 0.8 / 2, paint);
+
+      //绘制文字
+      final textSpan = TextSpan(text: Piece.Names[it.piece],
+        style: textStyle
+      );
+
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr
+      )..layout();
+
+      //计算字体的Metrics， 包含相应字体的Baseline。
+      final metrics = textPainter.computeLineMetrics()[0];
+
+      //测量字体的尺寸
+      final textSize = textPainter.size;
+
+      //从顶上算，文字的BaseLine 在 2/3 的高度线上。
+      final textOffset = it.pos - Offset(textSize.width / 2, metrics.baseline - textSize.height / 3);
+      //final textOffset = it.pos;
+      //将文字绘制到canvas上
+      textPainter.paint(canvas, textOffset);
+
+
+
+
+
+
+
+    });
 
 
   }
