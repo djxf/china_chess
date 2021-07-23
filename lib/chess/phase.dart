@@ -29,12 +29,30 @@ class Phase {
     //查询位置
     String pieceAt(int index) => _pieces[index];
 
+    //移动棋子
+    bool move(int from, int to) {
+        if (!validateMove(from, to)) return false;
 
-    //命名构造方法
+        //1 修改棋盘
+        _pieces[to] = _pieces[from];
+        _pieces[from] = Piece.Empty;
+
+        //2 交换走子方
+        _side = Side.oppo(_side);
+
+        return true;
+    }
+
+    //验证走子是否合法
+    bool validateMove(int from, int to) {
+        //TODO
+        return true;
+    }
+
+    //默认构造方法
     Phase.defaultPhase() {
         _side = Side.Red;
         _pieces = List<String>(90);
-
 
         //从上到下 棋盘第一行
         _pieces[0 * 9 + 0] = Piece.BlackRook;
@@ -86,7 +104,6 @@ class Phase {
         for(var i = 0; i < 90; i++) {
             _pieces[i] ??= Piece.Empty;
         }
-
     }
 
 }
