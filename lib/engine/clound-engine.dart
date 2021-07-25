@@ -23,16 +23,26 @@ class CloudEngine {
   Future<EngineResponse> search(Phase phase, {bool byUser = true}) async {
 
     final fen = phase.toFen();
-    var resonpse = await ChessDB.query(fen);
+    var response = await ChessDB.query(fen);
 
-    if (resonpse == null) return EngineResponse("network-error");
+    if (response == null) return EngineResponse("network-error");
 
-    if (!resonpse.startsWith("move:")) {
-      print("ChessDB.query: $resonpse\n");
+    if (!response.startsWith("move:")) {
+      print("ChessDB.query: $response\n");
+
+      if (byUser) {
+        response = await ChessDB.requestComputeBackground(fen);
+        print("ChessDB.requestComputeBackground: $response\n");
+      }
+
+      return Future<EngineResponse>.delayed(
+        Duration(seconds: 2),
+            () => search(phase, byUser: false),
+      );
     } else {
 
       //有着法列表返回时
-      final firstStep = resonpse.split('|')[0];
+      final firstStep = response.split('|')[0];
       print("ChessDB.query: $firstStep");
       final segments = firstStep.split(',');
       if (segments.length < 2) return EngineResponse("data-error");
@@ -44,8 +54,6 @@ class CloudEngine {
       final moveWithScore = int.tryParse(scoreSegments[1]) != null;
       //存在有效着法
       if (moveWithScore) {
-
-
         //
         final step = move.substring(5);
 
@@ -59,18 +67,15 @@ class CloudEngine {
 
         //云库没有遇到这个局面，请求它执行后台计算
         if (byUser) {
-          resonpse = await ChessDB.requestComputeBackground(fen);
-          print("ChessDB.requestComputeBackground: $resonpse\n");
+          response = await ChessDB.requestComputeBackground(fen);
+          print("ChessDB.requestComputeBackground: $response\n");
         }
 
         return Future<EngineResponse>.delayed(
           Duration(seconds: 2),
             () => search(phase, byUser: false),
         );
-
       }
-
-
     }
 
     return EngineResponse("unknown-error");

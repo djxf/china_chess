@@ -27,9 +27,7 @@ class ChessDB {
       path: Path,
       queryParameters: {
         'action': 'queryall',
-        'learn': '1',
-        'showall': '1',
-        'borad': board
+        'board': board
       }
     );
 
@@ -47,7 +45,6 @@ class ChessDB {
     }
 
     return null;
-
   }
 
   //请求云库在后台计算指定局面的最佳着法
@@ -58,7 +55,7 @@ class ChessDB {
       host: Host,
       path: Path,
       queryParameters: {
-        'action': 'queue',
+        'action': 'querybest',
         'board' : board,
       }
     );
