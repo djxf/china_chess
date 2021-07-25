@@ -55,7 +55,7 @@ class ChessDB {
       host: Host,
       path: Path,
       queryParameters: {
-        'action': 'querybest',
+        'action': 'query',
         'board' : board,
       }
     );

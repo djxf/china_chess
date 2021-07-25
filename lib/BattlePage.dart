@@ -36,7 +36,7 @@ class _BattlePageState extends State<BattlePage> {
 
     changeStatus("对方正在思考中...");
 
-    final response = await CloudEngine().search(Battle.shared.phase);
+    final response = await CloudEngine().mainSearch(Battle.shared.phase);
 
     if (response.type == 'move') {
 

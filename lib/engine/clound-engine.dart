@@ -35,9 +35,9 @@ class CloudEngine {
         print("ChessDB.requestComputeBackground: $response\n");
       }
 
-      return Future<EngineResponse>.delayed(
-        Duration(seconds: 2),
-            () => search(phase, byUser: false),
+      return EngineResponse(
+          'move',
+          value: Move.fromEngineStep(response.substring(5,8))
       );
     } else {
 
@@ -79,5 +79,25 @@ class CloudEngine {
     }
 
     return EngineResponse("unknown-error");
+  }
+
+
+  Future<EngineResponse> mainSearch(Phase phase) async{
+
+
+    final fen = phase.toFen();
+    var response = await ChessDB.requestComputeBackground(fen);
+
+    if (!response.startsWith("move:")) {
+      return EngineResponse(
+          'Error: $response',
+      );
+    }
+
+    final move = response.split(':')[1];
+    return EngineResponse(
+      'move',
+      value: Move.fromEngineStep(move)
+    );
   }
 }
