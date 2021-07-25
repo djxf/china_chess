@@ -3,6 +3,7 @@ import 'package:china_chess/Board/BoardWidget.dart';
 import 'package:china_chess/Constants.dart';
 import 'package:china_chess/chess/battle.dart';
 import 'package:china_chess/chess/cc_base.dart';
+import 'package:china_chess/chess/chess_road.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,7 @@ class _BattlePageState extends State<BattlePage> {
 
     //1 是否轮到当前棋子方行棋。
     if (Battle.shared.focusIndex == -1 && Side.of(tapPiece) != cruSide) {
+
       return;
     }
 
@@ -82,18 +84,108 @@ class _BattlePageState extends State<BattlePage> {
   @override
   Widget build(BuildContext context) {
 
+    final header = createPageHeader();
+    final board = createBoard();
+    final operatorBar = createOperatorBar();
+
+    return Scaffold(
+      backgroundColor: Constants.DarkBackground,
+      body: Column(
+        children: [
+          header, board, operatorBar
+        ],
+      ),
+    );
+
+  }
+
+
+  Widget createPageHeader() {
+
+    final textStyle = TextStyle(
+      fontSize: 28,
+      color: Constants.DarkTextPrimary,
+    );
+
+    final subTitleStyle = TextStyle(
+      fontSize: 16,
+      color: Constants.DarkTextSecondary
+    );
+
+    return Container(
+      margin: EdgeInsets.only(top: ChessRoadApp.StatusBarHeight),
+      child: Column(
+        children: [
+          Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
+                Navigator.pop(context);
+              }, color: Constants.DarkTextPrimary,),
+              Text("单机对战", style: textStyle),
+              IconButton(
+                icon: Icon(Icons.settings, color: Constants.DarkTextPrimary,),
+                onPressed: () {},
+              )
+            ],
+          ),
+          Container(
+            height: 4,
+            width: 180,
+            margin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: Constants.BoardBackground,
+              borderRadius: BorderRadius.circular(2)
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text("[游戏状态]", maxLines: 1, style: subTitleStyle,),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget createBoard() {
     //window
     final Size windowSize = MediaQuery.of(context).size;
     final boardWidth = windowSize.width - Constants.PaddingOfBorad * 2;
-    return Scaffold(
-      appBar: AppBar(title: Text("对战"), centerTitle: true,),
-      body: Container(
+    return Container(
         margin: const EdgeInsets.symmetric(
-          horizontal: Constants.BoardMarginH,
-          vertical: Constants.BoardMarginV
+            horizontal: Constants.BoardMarginH,
+            vertical: Constants.BoardMarginV
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Constants.BoardBackground
         ),
         child: BoardWidget(width: boardWidth, onBoardTap: onBoardTap,),
+      );
+  }
+
+  //操作菜单栏
+  Widget createOperatorBar() {
+
+    final buttonStyle = TextStyle(color: Constants.DarkTextSecondary, fontSize: 20);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: Constants.BoardBackground,
       ),
+      margin: EdgeInsets.symmetric(horizontal: Constants.BoardMarginH),
+      padding: EdgeInsets.symmetric(vertical: 1),
+      child: Flex(
+          direction: Axis.horizontal,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(onPressed: () {}, child: Text("新对局", style: buttonStyle,)),
+            TextButton(onPressed: () {}, child: Text("悔棋", style: buttonStyle,)),
+            TextButton(onPressed: () {}, child: Text("分析局面", style: buttonStyle,)),
+          ],
+        ),
     );
   }
 }

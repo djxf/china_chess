@@ -38,9 +38,8 @@ class Battle {
 
       if (!_phase.move(from, to)) return false;
 
-      _blurIndex = -1; // 来自
+      _blurIndex = from; // 来自
       _focusIndex = -1;  // 到哪里去
-
       return true;
     }
 

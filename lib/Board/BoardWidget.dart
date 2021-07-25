@@ -1,12 +1,10 @@
 
-import 'dart:ffi';
 
 import 'package:china_chess/Board/borad_paint.dart';
 import 'package:china_chess/Board/piece_painter.dart';
 import 'package:china_chess/Board/words_on_board.dart';
 import 'package:china_chess/Constants.dart';
 import 'package:china_chess/chess/battle.dart';
-import 'package:china_chess/chess/phase.dart';
 import 'package:flutter/cupertino.dart';
 
 class BoardWidget extends StatelessWidget {
