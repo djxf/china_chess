@@ -4,6 +4,7 @@ import 'package:china_chess/Constants.dart';
 import 'package:china_chess/chess/battle.dart';
 import 'package:china_chess/chess/cc_base.dart';
 import 'package:china_chess/chess/chess_road.dart';
+import 'package:china_chess/engine/clound-engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,11 +25,50 @@ class BattlePage extends StatefulWidget {
 class _BattlePageState extends State<BattlePage> {
 
 
+  //状态说明
+  String _status = '';
+
+  changeStatus(String status) => setState(() {
+    _status = status;
+  });
+
+  engineToGO() async {
+
+    changeStatus("对方正在思考中...");
+
+    final response = await CloudEngine().search(Battle.shared.phase);
+
+    if (response.type == 'move') {
+
+      final step = response.value;
+      Battle.shared.move(step.from, step.to);
+
+      final result = Battle.shared.scanBattleResult();
+
+      switch (result) {
+        case BattleResult.Pending:
+          changeStatus("请走棋...");
+          break;
+        case BattleResult.Win:
+          //TODO
+        case BattleResult.Lose:
+          //TODO
+        case BattleResult.Draw:
+          //TODO
+          break;
+      }
+    } else {
+      changeStatus("Error: ${response.type}");
+    }
+
+  }
+
   //由BattlePage的state来处理棋盘的逻辑
   onBoardTap(BuildContext context, int pos) {
     print("board cross index: $pos");
 
     final phase = Battle.shared.phase;
+    print("当前局面：${phase.toFen()} ");
 
     //当前走子方
     var cruSide = phase.side;
@@ -58,8 +98,22 @@ class _BattlePageState extends State<BattlePage> {
       if (Side.sameSide(focusPiece, tapPiece)) {
           Battle.shared.select(pos);
       } else if (Battle.shared.move(Battle.shared.focusIndex, pos)) {
-        //tode: 吃子或者移动到空白处
+        //TODO: 吃子或者移动到空白处
+        //
+        final result = Battle.shared.scanBattleResult();
 
+        switch (result) {
+          case BattleResult.Pending:
+          // 玩家走一步棋后，如果游戏还没有结束，则启动引擎走棋
+            engineToGO();
+            break;
+          case BattleResult.Win:
+            break;
+          case BattleResult.Lose:
+            break;
+          case BattleResult.Draw:
+            break;
+        }
       }
 
     } else {
@@ -78,7 +132,36 @@ class _BattlePageState extends State<BattlePage> {
 
   @override
   void initState() {
+    super.initState();
     Battle.shared.init();
+  }
+
+  @override
+  void setState(fn) {
+    super.setState(fn);
+  }
+
+  @override
+  void didUpdateWidget(covariant BattlePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  //网络请求之类，如果放在build方法之内将会十分耗费资源。
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+
+  //remove from the tree,
+  @override
+  void deactivate() {
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -141,7 +224,7 @@ class _BattlePageState extends State<BattlePage> {
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text("[游戏状态]", maxLines: 1, style: subTitleStyle,),
+            child: Text("[$_status]", maxLines: 1, style: subTitleStyle,),
           )
         ],
       ),
@@ -176,7 +259,6 @@ class _BattlePageState extends State<BattlePage> {
         color: Constants.BoardBackground,
       ),
       margin: EdgeInsets.symmetric(horizontal: Constants.BoardMarginH),
-      padding: EdgeInsets.symmetric(vertical: 1),
       child: Flex(
           direction: Axis.horizontal,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -188,4 +270,7 @@ class _BattlePageState extends State<BattlePage> {
         ),
     );
   }
+
+
+
 }

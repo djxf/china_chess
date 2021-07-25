@@ -21,6 +21,9 @@ class Phase {
     //90个位置
     List<String> _pieces;
 
+    //无吃子步数，总回合数
+    int halfMove = 0, fullMove = 0;
+
     get side => _side;
 
     //转换行棋方
@@ -33,9 +36,27 @@ class Phase {
     bool move(int from, int to) {
         if (!validateMove(from, to)) return false;
 
+
+        //记录无吃子步数
+        if (_pieces[to] != Piece.Empty) {
+            halfMove = 0;
+        } else {
+            halfMove++;
+        }
+
+        // 和总回合数
+        if (fullMove == 0) {
+            fullMove++;
+        } else if (side == Side.Black) {
+            fullMove++;
+        }
+
+
         //1 修改棋盘
         _pieces[to] = _pieces[from];
         _pieces[from] = Piece.Empty;
+
+
 
         //2 交换走子方
         _side = Side.oppo(_side);
@@ -104,6 +125,46 @@ class Phase {
         for(var i = 0; i < 90; i++) {
             _pieces[i] ??= Piece.Empty;
         }
+    }
+
+    //根据局面数据生成局面表示字符串(FEN)
+    String toFen() {
+
+        var fen = '';
+        for( var row = 0; row < 10; row++) {
+
+            var emptyCounter = 0;
+
+            for(var column = 0; column < 9; column++) {
+                final piece = pieceAt(row * 9 + column);
+
+                if (piece == Piece.Empty) {
+                    emptyCounter++;
+                } else {
+                    if (emptyCounter > 0) {
+                        fen += emptyCounter.toString();
+                        emptyCounter = 0;
+                    }
+                    fen += piece;
+                }
+            }
+            if (emptyCounter > 0) {
+                fen += emptyCounter.toString();
+            }
+
+            if (row < 9) {
+                fen += '/';
+            }
+        }
+        fen += ' $side';
+
+        //王车易位和吃过路兵标志
+        fen += ' - - ';
+
+        //step counter
+        fen += '$halfMove $fullMove';
+
+        return fen;
     }
 
 }

@@ -74,6 +74,71 @@ class Piece {
 
   static bool isBlack(String c) => 'rnbackcp'.contains(c);
 
+}
 
+//对战结果： 未决， 赢， 输， 和
+enum BattleResult { Pending, Win, Lose, Draw}
+
+class Move {
+
+
+
+  static const InvalidIndex = -1;
+
+  int from, to;
+
+  int fx, fy, tx, ty;
+
+  String captured;
+
+  String step;
+
+  Move(this.from, this.to, {this.captured = Piece.Empty}) {
+    fx = from % 9;
+    fy = from ~/ 9;
+
+    tx = to % 9;
+    ty = to ~/9;
+
+    if (fx < 0 || fx > 8 || fy < 0 || fy > 9) {
+      throw "Error: Invlid Step (from: $from, to: $to)";
+    }
+
+    step = String.fromCharCode('a'.codeUnitAt(0) + fx) + (9 - fy).toString();
+    step += String.fromCharCode('a'.codeUnitAt(0) + tx) + (9 - ty).toString();
+  }
+
+  Move.fromEngineStep(String step) {
+
+    this.step = step;
+
+    if (!validateEngineStep(step)) {
+      throw "Error: Invlid Step: $step";
+    }
+
+    final fx = step[0].codeUnitAt(0) - 'a'.codeUnitAt(0);
+    final fy = 9 - (step[1].codeUnitAt(0) - '0'.codeUnitAt(0));
+    final tx = step[2].codeUnitAt(0) - 'a'.codeUnitAt(0);
+    final ty = 9 - (step[3].codeUnitAt(0) - '0'.codeUnitAt(0));
+
+    from = fx + fy * 9;
+    to = tx + ty * 9;
+    captured = Piece.Empty;
+  }
+
+  static bool validateEngineStep(String step) {
+
+    if (step == null || step.length < 4)  return false;
+
+    final fx = step[0].codeUnitAt(0) - 'a'.codeUnitAt(0);
+    final fy = 9 - (step[1].codeUnitAt(0) - '0'.codeUnitAt(0));
+    if (fx < 0 || fx > 8 || fy < 0 || fy > 9) return false;
+
+    final tx = step[2].codeUnitAt(0) - 'a'.codeUnitAt(0);
+    final ty = 9 - (step[3].codeUnitAt(0) - '0'.codeUnitAt(0));
+    if (tx < 0 || tx > 8 || ty < 0 || ty > 9) return false;
+
+    return true;
+  }
 
 }

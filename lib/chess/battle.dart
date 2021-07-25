@@ -1,6 +1,7 @@
 
 
 
+import 'package:china_chess/chess/cc_base.dart';
 import 'package:china_chess/chess/phase.dart';
 
 /**
@@ -59,4 +60,10 @@ class Battle {
     get phase => _phase;
 
     get blurIndex => _blurIndex;
+
+    //扫描对局结果
+    BattleResult scanBattleResult() {
+      //TODO
+      return BattleResult.Pending;
+    }
 }
