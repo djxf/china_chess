@@ -87,7 +87,7 @@ class Phase {
         _pieces[0 * 9 + 8] = Piece.BlackRook;
 
 
-        //从上到下 棋盘第三行
+        //从上到下棋盘第三行
         _pieces[2 * 9 + 1] = Piece.BlackCanon;
         _pieces[2 * 9 + 7] = Piece.BlackCanon;
 
@@ -159,10 +159,10 @@ class Phase {
         fen += ' $side';
 
         //王车易位和吃过路兵标志
-        fen += ' - - ';
+        //fen += ' - - ';
 
         //step counter
-        fen += '$halfMove $fullMove';
+        //fen += '$halfMove $fullMove';
 
         return fen;
     }

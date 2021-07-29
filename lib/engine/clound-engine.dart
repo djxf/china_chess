@@ -94,7 +94,7 @@ class CloudEngine {
       );
     }
 
-    final move = response.split(':')[1];
+    final move = response.substring(5, 8);
     return EngineResponse(
       'move',
       value: Move.fromEngineStep(move)
