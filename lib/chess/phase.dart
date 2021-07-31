@@ -51,17 +51,21 @@ class Phase {
             fullMove++;
         }
 
-
         //1 修改棋盘
         _pieces[to] = _pieces[from];
         _pieces[from] = Piece.Empty;
 
-
-
         //2 交换走子方
         _side = Side.oppo(_side);
-
         return true;
+    }
+
+    //测试移动方法,需要在克隆的棋盘上进行行棋假设
+    void moveTest(Move move, {turnSide = false}) {
+        _pieces[move.to] = _pieces[move.from];
+        _pieces[move.from] = Piece.Empty;
+
+        if (trunSide()) _side = Side.oppo(_side);
     }
 
     //验证走子是否合法
@@ -165,6 +169,19 @@ class Phase {
         //fen += '$halfMove $fullMove';
 
         return fen;
+    }
+
+    Phase.clone(Phase other) {
+
+        _pieces = List<String>();
+
+        other._pieces.forEach((it) {
+            _pieces.add(it);
+        });
+
+        _side = other._side;
+        halfMove = other.halfMove;
+        fullMove = other.fullMove;
     }
 
 }
