@@ -1,7 +1,6 @@
 
 
 import 'package:china_chess/chess/cc_base.dart';
-import 'package:china_chess/chess/steps-validate.dart';
 
 /**
  *
@@ -71,8 +70,8 @@ class Phase {
 
     //验证走子是否合法
     bool validateMove(int from, int to) {
-        if (Side.of(_pieces[from]) != _side) return false;
-        return (StepValidate.validate(this, Move(from, to)));
+        //TODO
+        return true;
     }
 
     //默认构造方法

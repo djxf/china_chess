@@ -81,6 +81,8 @@ enum BattleResult { Pending, Win, Lose, Draw}
 
 class Move {
 
+
+
   static const InvalidIndex = -1;
 
   int from, to;

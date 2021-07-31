@@ -15,7 +15,7 @@ int binarySearch(List<int> array, int start, int end, int key) {
 
   if (array == null || start > end) return -1;
 
-  //int mid = (end - start) >> 1 + start;
+  //int mid = (end - start) ~/ 2 + start;
   int mid = (start + end) >> 1;
   if (array[mid] == key) {
     return mid;
