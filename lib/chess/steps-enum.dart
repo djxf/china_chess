@@ -45,6 +45,7 @@ class StepsEnumerator {
 
   static posOnBoard(int pos) => pos > -1 && pos < 90;
 
+
   static List<Move> enumKingSteps(Phase phase, int row, int col, int from) {
 
     final offsetList = [
