@@ -142,19 +142,98 @@ class StepValidate {
         }
       }
     }
-
     return true;
   }
 
   //炮
   static bool validateCannonStep(Phase phase, Move move) {
 
+      final dx = move.tx - move.fx, dy = move.ty - move.fy;
+      if (dx != 0 && dy != 0) return false;
+
+      if (dy == 0) {  //横向移动
+          if (dx < 0 ) { //左移
+
+            var overPiece = false;
+
+            //扫描是由有炮台
+            for (int i = move.fx - 1; i > move.tx; i--) {
+              if (phase.pieceAt(move.fy * 9 + i) != Piece.Empty) {
+                if (overPiece) return false;
+
+                //有炮台，但是没有攻击则为无效走法
+                if (phase.pieceAt(move.to) == Piece.Empty) return false;
+                overPiece = true;
+              }
+            }
+            if (!overPiece && phase.pieceAt(move.to) != Piece.Empty) return false;
+          } else {
+            var overPiece = false;
+
+            //扫描是由有炮台
+            for (int i = move.fx + 1; i < move.tx; i++) {
+              if (phase.pieceAt(move.fy * 9 + i) != Piece.Empty) {
+                if (overPiece) return false;
+
+                //有炮台，但是没有攻击则为无效走法
+                if (phase.pieceAt(move.to) == Piece.Empty) return false;
+                overPiece = true;
+              }
+            }
+            if (!overPiece && phase.pieceAt(move.to) != Piece.Empty) return false;
+          }
+      } else {
+
+        if (dy < 0) {
+          var overPiece = false;
+
+          //扫描是由有炮台
+          for (int i = move.fy - 1; i > move.ty; i--) {
+            if (phase.pieceAt(i * 9 + move.fx) != Piece.Empty) {
+              if (overPiece) return false;
+
+              //有炮台，但是没有攻击则为无效走法
+              if (phase.pieceAt(move.to) == Piece.Empty) return false;
+              overPiece = true;
+            }
+          }
+          if (!overPiece && phase.pieceAt(move.to) != Piece.Empty) return false;
+        } else {
+          var overPiece = false;
+
+          //扫描是由有炮台
+          for (int i = move.fy + 1; i < move.ty; i++) {
+            if (phase.pieceAt(i * 9 + move.fx) != Piece.Empty) {
+              if (overPiece) return false;
+
+              //有炮台，但是没有攻击则为无效走法
+              if (phase.pieceAt(move.to) == Piece.Empty) return false;
+              overPiece = true;
+            }
+          }
+          if (!overPiece && phase.pieceAt(move.to) != Piece.Empty) return false;
+        }
+      }
+
+
+      return true;
   }
 
   //兵
   static bool validatePawnStep(Phase phase, Move move) {
 
+      final dy = move.ty - move.fy;
+      final adx = abs(move.tx - move.fx), ady = abs(move.ty - move.fy);
+
+      if (adx > 1 || ady > 1 || (adx + ady) > 1) return false;
+
+      if (phase.side == Side.Red) {
+        if (move.fy > 4 && adx != 0) return false;
+        if (dy > 0 ) return false;
+      } else {
+        if (move.fy < 5 && adx != 0) return false;
+        if (dy < 0 ) return false;
+      }
+      return true;
   }
-
-
 }
