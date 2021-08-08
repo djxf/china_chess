@@ -77,7 +77,6 @@ class _BattlePageState extends State<BattlePage> {
 
     //1 是否轮到当前棋子方行棋。
     if (Battle.shared.focusIndex == -1 && Side.of(tapPiece) != cruSide) {
-
       return;
     }
 

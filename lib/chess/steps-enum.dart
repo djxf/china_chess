@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 
 class StepsEnumerator {
 
+
+  //枚举当前行棋方所有可能的走法
   static List<Move> enumSteps(Phase phase) {
 
     final steps = <Move>[];
