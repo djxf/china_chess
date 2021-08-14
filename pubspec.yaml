@@ -28,6 +28,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  # add this line to your dependencies
+  fluttertoast: ^8.0.8
+  #目录相关
+  path_provider: ^1.6.1
 
 dev_dependencies:
   flutter_test:
@@ -78,3 +82,6 @@ flutter:
     - family: KaiTi
       fonts:
         - asset: fonts/kaiti.ttf
+
+  assets:
+    - assets/BOOK.DAT

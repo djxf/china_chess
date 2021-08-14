@@ -24,19 +24,19 @@ class StepsEnumerator {
         if (Side.of(piece) != phase.side) continue;
 
         var pieceSteps;
-        if (piece == Piece.RedKing || piece == Piece.BlackKing) {
+        if (piece == Piece.RedKing || pieceSteps == Piece.BlackKing) {
             pieceSteps = enumKingSteps(phase, row, col, from);
-        } else if (piece == Piece.BlackRook || piece == Piece.RedRook) {
+        } else if (piece == Piece.BlackRook || pieceSteps == Piece.RedRook) {
             pieceSteps = enumRookSteps(phase, row, col, from);
-        } else if (piece == Piece.BlackKnigt || piece == Piece.RedKnigt) {
+        } else if (piece == Piece.BlackKnigt || pieceSteps == Piece.RedKnigt) {
           pieceSteps = enumKnightSteps(phase, row, col, from);
-        } else if (piece == Piece.BlackBishop || piece == Piece.RedBishop) {
+        } else if (piece == Piece.BlackBishop || pieceSteps == Piece.RedBishop) {
           pieceSteps = enumBishopSteps(phase, row, col, from);
-        } else if (piece == Piece.BlackAdvisor || piece == Piece.RedAdvisor) {
+        } else if (piece == Piece.BlackAdvisor || pieceSteps == Piece.RedAdvisor) {
           pieceSteps = enumAdvisorSteps(phase, row, col, from);
-        } else if (piece == Piece.RedCanon || piece == Piece.BlackCanon) {
+        } else if (piece == Piece.RedCanon || pieceSteps == Piece.BlackCanon) {
           pieceSteps = enumCanonSteps(phase, row, col, from);
-        } else if (piece == Piece.BlackPawn || piece == Piece.RedPawn) {
+        } else if (piece == Piece.BlackPawn || pieceSteps == Piece.RedPawn) {
           pieceSteps = enumPawnSteps(phase, row, col, from);
         }
         steps.addAll(pieceSteps);

@@ -25,6 +25,9 @@ class Phase {
     //无吃子步数，总回合数
     int halfMove = 0, fullMove = 0;
 
+    //对局结果字段
+    BattleResult result = BattleResult.Pending;
+
     get side => _side;
 
     //转换行棋方
@@ -75,8 +78,7 @@ class Phase {
         return (StepValidate.validate(this, Move(from, to)));
     }
 
-    //默认构造方法
-    Phase.defaultPhase() {
+    void initDefaultPhase() {
         _side = Side.Red;
         _pieces = List<String>(90);
 
@@ -130,6 +132,13 @@ class Phase {
         for(var i = 0; i < 90; i++) {
             _pieces[i] ??= Piece.Empty;
         }
+    }
+
+
+
+    //默认构造方法
+    Phase.defaultPhase() {
+        initDefaultPhase();
     }
 
     //根据局面数据生成局面表示字符串(FEN)

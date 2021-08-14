@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:china_chess/chess/phase.dart';
+import 'package:china_chess/engine/clound-engine.dart';
 import 'package:flutter/material.dart';
 
 /**
@@ -76,3 +79,16 @@ class ChessDB {
     return null;
   }
 }
+
+
+
+abstract class AiEngine {
+
+  Future<void> startup() async {}
+
+  Future<void> shutdown() async {}
+
+  //搜索最佳着法
+  Future<EngineResponse> search(Phase phase, {bool byUser = true});
+}
+

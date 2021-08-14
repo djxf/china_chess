@@ -1,6 +1,7 @@
 
 
 
+import 'package:china_chess/chess/cc-rules.dart';
 import 'package:china_chess/chess/cc_base.dart';
 import 'package:china_chess/chess/phase.dart';
 
@@ -33,6 +34,10 @@ class Battle {
       _blurIndex = _focusIndex = -1;
     }
 
+    newGame() {
+      Battle.shared.phase.initDefaultPhase();
+    }
+
 
     //移动棋子
     bool move(int from, int to) {
@@ -63,7 +68,20 @@ class Battle {
 
     //扫描对局结果
     BattleResult scanBattleResult() {
-      //TODO
-      return BattleResult.Pending;
+
+      final forPerson = (_phase.side == Side.Red);
+
+      if (ChessRules.beKilled(_phase)) {
+          return forPerson ? BattleResult.Lose : BattleResult.Lose;
+      }
+
+      return (_phase.halfMove > 120) ? BattleResult.Draw : BattleResult.Pending;
     }
+
+    //是否存在长将情况
+    bool scanLongCatch() {
+      //TODO
+      return false;
+    }
+
 }

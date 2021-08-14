@@ -18,7 +18,7 @@ class EngineResponse {
 
 
 
-class CloudEngine {
+class CloudEngine extends AiEngine{
 
   Future<EngineResponse> search(Phase phase, {bool byUser = true}) async {
 

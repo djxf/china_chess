@@ -7,6 +7,7 @@ import 'package:china_chess/chess/chess_road.dart';
 import 'package:china_chess/engine/clound-engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 /**
@@ -32,6 +33,30 @@ class _BattlePageState extends State<BattlePage> {
     _status = status;
   });
 
+  newGame() {
+
+    confirm() {
+      Navigator.of(context).pop();
+      Battle.shared.newGame();
+      setState(() { });
+    }
+
+    cancle() => Navigator.of(context).pop();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('放弃对局？', style: TextStyle(color: Constants.PrimaryColor),),
+          actions: [
+            TextButton(onPressed: confirm, child: Text("确定")),
+            TextButton(onPressed: cancle, child: Text("取消")),
+          ],
+        );
+      }
+    );
+  }
+
   engineToGO() async {
 
     changeStatus("对方正在思考中...");
@@ -50,11 +75,13 @@ class _BattlePageState extends State<BattlePage> {
           changeStatus("请走棋...");
           break;
         case BattleResult.Win:
-          //TODO
+          getWin();
+          break;
         case BattleResult.Lose:
-          //TODO
+          getLose();
+          break;
         case BattleResult.Draw:
-          //TODO
+          getDraw();
           break;
       }
     } else {
@@ -77,6 +104,10 @@ class _BattlePageState extends State<BattlePage> {
 
     //1 是否轮到当前棋子方行棋。
     if (Battle.shared.focusIndex == -1 && Side.of(tapPiece) != cruSide) {
+      print("行棋方错误");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("当前行棋方为： ${(cruSide == Side.Red) ? "黑":"红"}"),
+      ));
       return;
     }
 
@@ -107,10 +138,13 @@ class _BattlePageState extends State<BattlePage> {
             engineToGO();
             break;
           case BattleResult.Win:
+            getWin();
             break;
           case BattleResult.Lose:
+            getLose();
             break;
           case BattleResult.Draw:
+            getDraw();
             break;
         }
       }
@@ -262,7 +296,7 @@ class _BattlePageState extends State<BattlePage> {
           direction: Axis.horizontal,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            TextButton(onPressed: () {}, child: Text("新对局", style: buttonStyle,)),
+            TextButton(onPressed: newGame, child: Text("新对局", style: buttonStyle,)),
             TextButton(onPressed: () {}, child: Text("悔棋", style: buttonStyle,)),
             TextButton(onPressed: () {}, child: Text("分析局面", style: buttonStyle,)),
           ],
@@ -270,6 +304,70 @@ class _BattlePageState extends State<BattlePage> {
     );
   }
 
+  //显示胜利框
+  void getWin() {
+
+    Battle.shared.phase.result = BattleResult.Win;
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("胜利", style: TextStyle(color: Colors.black),),
+            content: Text('恭喜你取得胜利！'),
+            actions: [
+              TextButton(onPressed: newGame, child: Text("再来一盘")),
+              TextButton(onPressed: () {
+                Navigator.of(context).pop();
+              }, child: Text("关闭")),
+            ],
+          );
+        });
+  }
 
 
-}
+  //显示失败框
+  void getLose() {
+
+    Battle.shared.phase.result = BattleResult.Lose;
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("失败", style: TextStyle(color: Colors.black),),
+            content: Text('需要继续加油！'),
+            actions: [
+              TextButton(onPressed: newGame, child: Text("再来一盘")),
+              TextButton(onPressed: () {
+                Navigator.of(context).pop();
+              }, child: Text("关闭")),
+            ],
+          );
+        });
+  }
+
+  //显示和棋框
+  void getDraw() {
+    Battle.shared.phase.result = BattleResult.Draw;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('和了', style: TextStyle(color: Colors.black)),
+          content: Text('您用自己的力量捍卫了和平！'),
+          actions: <Widget>[
+            TextButton(child: Text('再来一盘'), onPressed: newGame),
+            TextButton(child: Text('关闭'), onPressed: () => Navigator.of(context).pop()),
+          ],
+        );
+      },
+    );
+  }
+  }
+
+
+
+
