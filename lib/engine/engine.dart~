@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
  */
 
 enum EngineType{
-  Cloud, Native
+  cloud, 
 }
 
 class ChessDB {

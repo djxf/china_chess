@@ -2,6 +2,8 @@
 
 import 'package:china_chess/BattlePage.dart';
 import 'package:china_chess/chess/chess_road.dart';
+import 'package:china_chess/engine/engine.dart';
+import 'package:china_chess/engine/native-engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -31,10 +33,12 @@ class MainMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text("中国象棋", style: nameStyle, textAlign: TextAlign.center,),
-            TextButton(onPressed: () {}, child: Text("单机对战", style: menuItemStyle)),
+            TextButton(onPressed: () {
+              MaterialPageRoute(builder: (context) => BattlePage(EngineType.Native));
+            }, child: Text("单机对战", style: menuItemStyle)),
             TextButton(onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BattlePage()),
+                MaterialPageRoute(builder: (context) => BattlePage(EngineType.Cloud)),
               );
             }, child: Text("挑战云主机", style: menuItemStyle)),
             TextButton(onPressed: () {}, child: Text("排行榜", style: menuItemStyle)),

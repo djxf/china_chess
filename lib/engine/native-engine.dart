@@ -3,23 +3,51 @@
 
 import 'dart:io';
 
+import 'package:china_chess/chess/cc_base.dart';
 import 'package:china_chess/chess/phase.dart';
 import 'package:china_chess/engine/clound-engine.dart';
 import 'package:china_chess/engine/engine.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
 class NativeEngine extends AiEngine {
 
   static const platform = const MethodChannel("cn.apppk.chessroad/engine");
 
   @override
-  Future<EngineResponse> search(Phase phase, {bool byUser = true}) {
+  Future<EngineResponse> search(Phase phase, {bool byUser = true}) async {
+      if (await isThink()) await stopSearching();
 
+      //发送局面信息给引擎
+      send(buildPositionCommand(phase));
+      send('go time 5000');
+
+      //等待回复
+      final String response = await waitResponse(['bestmove', 'nobestmove']);
+
+      if (response.startsWith('bestmove')) {
+        var step = response.substring('bestmove'.length + 1);
+
+        final pos = step.indexOf(' ');
+        if (pos > -1) {
+          step = step.substring(0, pos);
+        }
+
+        return EngineResponse('move', value: Move.fromEngineStep(step));
+      }
+
+      if (response.startsWith('nobestmove')) {
+        return EngineResponse('nobestmove');
+      }
+
+      return EngineResponse('timeout');
   }
 
   @override
-  Future<void> startup() {
+  Future<void> startup() async{
+
+
+    await waitResponse(['ucciok'], sleep: 1, times: 30);
     return super.startup();
   }
 
@@ -71,9 +99,9 @@ class NativeEngine extends AiEngine {
   //给引擎设置开局库
   Future setBookFile() async {
 
-    final docDir = await getApplicationDocumentsDirectory();
+    final docDir = p.current;
     print("docDir: $docDir");
-    final bookFile = File('${docDir.path}/BOOK.DAT');
+    final bookFile = File('${docDir}/BOOK.DAT');
 
     try {
         if (!await bookFile.exists()) {
@@ -92,6 +120,35 @@ class NativeEngine extends AiEngine {
   Future<void> stopSearching() async {
     await send('stop');
   }
+
+  //
+  String buildPositionCommand(Phase phase) {
+
+    final startPhase = phase.lastCapturedPhase;
+    final move = phase.movesSinceLastCaptured();
+
+    if (move.isEmpty) return 'postion fen $startPhase';
+
+    return 'postion fen $startPhase move $move';
+  }
+
+  Future<String> waitResponse(List<String> list, {sleep = 100, times = 100}) async{
+      if (times <= 0) return '';
+
+      final response = await read();
+
+      if (response != null) {
+        for (var prefix in list) {
+          if (response.startsWith(prefix)) return response;
+        }
+      }
+
+      return Future<String>.delayed(
+        Duration(milliseconds: sleep),
+          () => waitResponse(list, times: times -1)
+      );
+  }
+
 
 
 }

@@ -5,6 +5,8 @@ import 'package:china_chess/chess/battle.dart';
 import 'package:china_chess/chess/cc_base.dart';
 import 'package:china_chess/chess/chess_road.dart';
 import 'package:china_chess/engine/clound-engine.dart';
+import 'package:china_chess/engine/engine.dart';
+import 'package:china_chess/engine/native-engine.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,7 +19,11 @@ import 'package:fluttertoast/fluttertoast.dart';
  */
 
 class BattlePage extends StatefulWidget {
-  const BattlePage({Key key}) : super(key: key);
+
+  BattlePage(this.engineType): engine = ((engineType == EngineType.Cloud) ? CloudEngine() : NativeEngine());
+
+  final EngineType engineType;
+  final AiEngine engine;
 
   @override
   _BattlePageState createState() => _BattlePageState();
@@ -61,7 +67,7 @@ class _BattlePageState extends State<BattlePage> {
 
     changeStatus("对方正在思考中...");
 
-    final response = await CloudEngine().mainSearch(Battle.shared.phase);
+    final response = await widget.engine.search(Battle.shared.phase);
 
     if (response.type == 'move') {
 
@@ -167,6 +173,9 @@ class _BattlePageState extends State<BattlePage> {
   void initState() {
     super.initState();
     Battle.shared.init();
+
+    //启动引擎
+    widget.engine.startup();
   }
 
   @override
@@ -195,6 +204,7 @@ class _BattlePageState extends State<BattlePage> {
   @override
   void dispose() {
     super.dispose();
+    widget.engine.shutdown();
   }
 
   @override
@@ -239,7 +249,7 @@ class _BattlePageState extends State<BattlePage> {
               IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
                 Navigator.pop(context);
               }, color: Constants.DarkTextPrimary,),
-              Text("单机对战", style: textStyle),
+              Text(widget.engineType == EngineType.Cloud ? '挑战云主机' : '单机对战', style: textStyle),
               IconButton(
                 icon: Icon(Icons.settings, color: Constants.DarkTextPrimary,),
                 onPressed: () {},

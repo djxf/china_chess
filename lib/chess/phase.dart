@@ -36,6 +36,13 @@ class Phase {
     //查询位置
     String pieceAt(int index) => _pieces[index];
 
+    //
+    String lastCapturedPhase;
+
+    String captured;
+
+    final _history = <Move>[];
+
     //移动棋子
     bool move(int from, int to) {
         if (!validateMove(from, to)) return false;
@@ -61,6 +68,12 @@ class Phase {
 
         //2 交换走子方
         _side = Side.oppo(_side);
+
+        //TODO: capture字段来源
+        _history.add(Move(from, to, captured: captured));
+        if (captured != Piece.Empty) {
+            lastCapturedPhase = toFen();
+        }
         return true;
     }
 
@@ -132,6 +145,8 @@ class Phase {
         for(var i = 0; i < 90; i++) {
             _pieces[i] ??= Piece.Empty;
         }
+
+        lastCapturedPhase = toFen();
     }
 
 
@@ -173,10 +188,10 @@ class Phase {
         fen += ' $side';
 
         //王车易位和吃过路兵标志
-        //fen += ' - - ';
+        fen += ' - - ';
 
         //step counter
-        //fen += '$halfMove $fullMove';
+        fen += '$halfMove $fullMove';
 
         return fen;
     }
@@ -192,6 +207,25 @@ class Phase {
         _side = other._side;
         halfMove = other.halfMove;
         fullMove = other.fullMove;
+    }
+
+    //
+    String movesSinceLastCaptured() {
+
+        var steps = '';
+        var posAfterLastCaptured = 0;
+        for (var i = _history.length - 1; i >= 0; i--) {
+            if (_history[i].captured != Piece.Empty) {
+                break;
+            }
+            posAfterLastCaptured = i;
+        }
+
+        for (var i = posAfterLastCaptured; i < _history.length; i++) {
+            steps += ' ${_history[i].step}';
+        }
+        //TODO: steps.substring(1)???
+        return steps.length > 0 ? steps.substring(1) : '';
     }
 
 }
